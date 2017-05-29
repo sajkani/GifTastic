@@ -26,6 +26,7 @@ input {
 
 }
 .row-header {
+	background-color: lightgrey;
 	display: block;
 }
 .col-header-title {
