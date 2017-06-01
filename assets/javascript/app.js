@@ -13,10 +13,8 @@ var gifThumbHeightNum;
 var imgHeightArr = [];
 var state;
 var gifClass;
-var newBtn;
+var newButton;
 var searchVal;
-jQuery.fn.exists = function(){ return this.length > 0; }
-
 var artists = [
 	'Chance the Rapper',
 	'Francis and the Lights',
@@ -48,9 +46,11 @@ function ajaxQuery() {
 		subject = $('#search').val();
 	}
 	queryUrl = ('https://api.giphy.com/v1/gifs/search?q=' + subject + limit + apiKey);
-	console.log(queryUrl);
+	console.log(queryUrl); // left in console to see why some GIFs were not moving
 
-	$.ajax({url: queryUrl, method: 'GET'})
+	$.ajax({
+		url: queryUrl,
+		method: 'GET'})
 	.done(function(response) {
 		console.log(response);
 		$('.col-gif').css({'height': ''});
@@ -60,7 +60,7 @@ function ajaxQuery() {
 
 			imgHeightArr.push(response.data[i].images.original.height/response.data[i].images.original.width);
 
-			respCol = $('<div class="col col-xs-3 col-gif"><img class="gif-thumb" alt="" src="' +
+			var respCol = $('<div class="col col-xs-3 col-gif"><img class="gif-thumb" alt="" src="' +
 				response.data[i].images.original_still.url
 				+ '" data-state="still" data-animate="' +
 				response.data[i].images.original.url
@@ -71,9 +71,9 @@ function ajaxQuery() {
 			$('.gif-thumb').on('load', imgHeight);
 			hasRating = response.data[i].rating.toUpperCase();
 			if(response.data[i].rating === '') {
-				respCol.append('<span>rating: NR</span>');
+				respCol.append('<span>Rating: NR</span>');
 			} else {
-				respCol.append('<span>rating: ' + hasRating + '</span>');
+				respCol.append('<span>Rating: ' + hasRating + '</span>');
 			}
 			$('.row-gif').append(respCol);
     	}
@@ -84,14 +84,12 @@ function ajaxQuery() {
 }
 function newButton(event) {
 	searchVal = $('#search').val().trim();
-	console.log(searchVal);
-	$('#search').blur();
+		$('#search').blur(); //added .blur to remove focus, not sure if this is needed
 		newBtn = $('<div class="col col-xs-2 col-btn"><button class="btn btn-default btn-gif" data-subject="' + searchVal + '"><span>' + searchVal + '</span></button></div>');
 		$('.row-btn').append(newBtn);
 		ajaxQuery();
 	$('#search').val('Search');
-	console.log(searchVal);
-	searchFocus();
+		searchFocus();
 	$('.btn-gif').click(ajaxQuery);
 
 }
@@ -100,21 +98,16 @@ function searchFocus(){
 		if((($('#search').attr('value')) || ($('#search').val()))  == 'Search') {
 			$('#search').attr('value', '');
 			$('#search').val('');
-			console.log('onfocus ' + $('#search').attr('value'), $('#search').val());
 		}
 	});
 	$('#search').blur(function() {
 		if((($('#search').attr('value')) || ($('#search').val()))  == '') {
 			$('#search').attr('value', 'Search');
 			$('#search').val('Search');
-			console.log('onblur ' + $('#search').attr('value'), $('#search').val());
 		}
 	});
 }
-function gifClick(event) {
-	console.log(event);
-	console.log('this data animate ' + $(event.target).data('animate'));
-	console.log($(event.target).attr('class'));
+function gifClick(event) { //found using event.target is making "most GIFs" stop/start animating.  I used the below If/Else statement from the 4-pausing-gifs-students.html class activity
 	state = $(event.target).attr('data-state');
 	if (state == 'still'){
         $(event.target).attr('src', $(event.target).data('animate'));
@@ -125,14 +118,15 @@ function gifClick(event) {
     }
 }
 
-function imgHeight() {
+function imgHeight() { //using to format images
 	imgHeightArr.sort(function(a, b) {
 		return b - a;
 	});
 	imgWidth = $('.gif-thumb').width();
 	newImgHeight = imgHeightArr[0] * imgWidth;
-	$('.col-gif').css({'height': 'calc(' + newImgHeight + 'px + 30px + 1.5em)'});
+	$('.col-gif').css({'height': 'calc(' + newImgHeight + 'px + 15px + 1.5em)'});
 }
+
 
 
 
